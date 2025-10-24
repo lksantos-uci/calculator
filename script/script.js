@@ -26,12 +26,16 @@ function divide(num1, num2) {
 function operate(operator, num1, num2) {
     switch (operator) {
         case "addition":
+        case "+":
             return add(num1, num2);
         case "subtraction":
+        case "-":
             return subtract(num1, num2);
         case "multiplication":
+        case "*":
             return multiply(num1, num2);
         case "division":
+        case "/":
             return divide(num1, num2);
     }
 }
@@ -39,12 +43,16 @@ function operate(operator, num1, num2) {
 function getOperator(operator) {
     switch (operator) {
         case "addition":
+        case '+':
             return '+';
         case "subtraction":
+        case '-':
             return '-';
         case "multiplication":
+        case '*':
             return '×';
         case "division":
+        case "/":
             return '÷';
     }
 }
@@ -105,28 +113,49 @@ function resetExpr(expr) {
     expr.operator = null;
 }
 
-function isNumberEntered(target) {
-    return target.className === "num-btn";
+function isNumberEntered(event) {
+    const target = event.target;
+    const type = event.type;
+    const key = event.key;
+    if (type === "click")
+        return target.className === "num-btn";
+    return !isNaN(key) || (key === '.');
 }
 
-function isOperationEntered(target) {
-    return target.className === "op-btn";
+function isOperationEntered(event) {
+    const target = event.target;
+    const type = event.type;
+    const key = event.key;
+    if (type === "click")
+        return target.className === "op-btn";
+    return (key === "+" || key === "-" || key === "*" || key === "/");
 }
 
-function isEqualsEntered(target) {
-    return target.id === "equals";
+function isEqualsEntered(event) {
+    const target = event.target;
+    const type = event.type;
+    const key = event.key;
+    if (type === "click")
+        return target.id === "equals";
+    return (key === '=');
 }
 
 function isCEEntered(target) {
     return target.id === "ce-btn";
-
 }
-function isDelEntered(target) {
-    return target.id === "del-btn";
+function isDelEntered(event) {
+    const target = event.target;
+    const type = event.type;
+    const key = event.key;
+    if (type === "click")
+        return target.id === "del-btn";
+    return key === "Backspace";
 }
 
-function handleNumbers(target, expr) {
-    const num = target.textContent;
+function handleNumbers(event, expr) {
+    const target = event.target;
+    const key = event.key;
+    const num = (event.type === "click") ? target.textContent : key;
     if (!expr.operand1) {
         expr.operand1 = num;
         updateDisplay(num);
@@ -154,17 +183,18 @@ function handleDel() {
 
 function handleInput(event, expr) {
     let target = event.target;
-    if (isNumberEntered(target)) {
-        handleNumbers(target, expr);
+    let type = event.type;
+    if (isNumberEntered(event)) {
+        handleNumbers(event, expr);
     }
-    else if (isOperationEntered(target) || isEqualsEntered(target)) {
+    else if (isOperationEntered(event) || isEqualsEntered(event)) {
         if (expr.operand1 && expr.operand2 && expr.operator) {
             expr.operand2 = getDisplayContent();
             displayExpr(expr);
             handleExpr(expr);
         }
-        if (isOperationEntered(target)) {
-            expr.operator = target.id;
+        if (isOperationEntered(event)) {
+            expr.operator = (type === "click") ? target.id : event.key;
             expr.operand1 = getDisplayContent();
             displayExpr(expr);
         }
@@ -174,7 +204,7 @@ function handleInput(event, expr) {
         clearNumDisplay();
         clearExprDisplay();
     }
-    else if (isDelEntered(target)) {
+    else if (isDelEntered(event)) {
         handleDel();
     }
 }
