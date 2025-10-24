@@ -39,10 +39,15 @@ h1 {
     margin: 10px;
     flex: 0.75;
     display: flex;
-    justify-content: end;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
     font-size: 48px;
     padding: 4px;
+}
+
+#expr-display {
+    font-size: 24px;
 }
 
 .btn-row {

@@ -34,7 +34,19 @@ function operate(operator, num1, num2) {
         case "division":
             return divide(num1, num2);
     }
+}
 
+function getOperator(operator) {
+    switch (operator) {
+        case "addition":
+            return '+';
+        case "subtraction":
+            return '-';
+        case "multiplication":
+            return '×';
+        case "division":
+            return '÷';
+    }
 }
 
 function displayInput(num) {
@@ -54,9 +66,27 @@ function displayInput(num) {
     }
 }
 
-function clearDisplay() {
-    const display = document.querySelector("#num-display");
-    display.textContent = "";
+function displayExpr(expr) {
+    const display = document.querySelector("#expr-display");
+    const operator = getOperator(expr.operator);
+    if (expr.operand1 && expr.operator && expr.operand2) {
+        let text = "".concat(expr.operand1, " ", operator, " ", expr.operand2, " = ");
+        display.textContent = text;
+    }
+    else if (expr.operand1 && expr.operator && !expr.operand2) {
+        let text = "".concat(expr.operand1, " ", operator);
+        display.textContent = text;
+    }
+}
+
+function clearNumDisplay() {
+    const numDisplay = document.querySelector("#num-display");
+    numDisplay.textContent = "";
+}
+
+function clearExprDisplay() {
+    const exprDisplay = document.querySelector("#expr-display");
+    exprDisplay.textContent = "";
 }
 
 function getDisplayContent() {
@@ -65,7 +95,7 @@ function getDisplayContent() {
 }
 
 function updateDisplay(num) {
-    clearDisplay();
+    clearNumDisplay();
     displayInput(num);
 }
 
@@ -109,7 +139,6 @@ function handleNumbers(target, expr) {
 }
 
 function handleExpr(expr) {
-    expr.operand2 = getDisplayContent();
     const result = operate(expr.operator, expr.operand1, expr.operand2);
     updateDisplay(result);
     expr.operand1 = expr.operand2 = expr.operator = null;
@@ -130,16 +159,20 @@ function handleClick(event, expr) {
     }
     else if (isOperationPressed(target) || isEqualsPressed(target)) {
         if (expr.operand1 && expr.operand2 && expr.operator) {
+            expr.operand2 = getDisplayContent();
+            displayExpr(expr);
             handleExpr(expr);
         }
         if (isOperationPressed(target)) {
             expr.operator = target.id;
             expr.operand1 = getDisplayContent();
+            displayExpr(expr);
         }
     }
     else if (isCEPressed(target)) {
         resetExpr(expr);
-        clearDisplay();
+        clearNumDisplay();
+        clearExprDisplay();
     }
     else if (isDelPressed(target)) {
         handleDel();
