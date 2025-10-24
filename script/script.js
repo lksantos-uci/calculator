@@ -11,10 +11,13 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
-    if (num2 === 0) alert("You cannot divide by 0"); 
+    if (num2 === "0") { 
+        alert("You cannot divide by 0"); 
+        return 0;
+    }
     else {
         const quotient = Number(num1) / Number(num2);
-        const MAX_LEN = 15;
+        const MAX_LEN = 14;
         return quotient.toPrecision(MAX_LEN);
     }
 }
@@ -36,16 +39,16 @@ function operate(operator, num1, num2) {
 function displayInput(num) {
     const display = document.querySelector("#num-display");
     const text = display.textContent;
-    const MAX_LEN = 15;
+    const MAX_LEN = 14;
     if (text.length < MAX_LEN) {
         if ((text === "0") || 
             (text === "" ) && 
             (num === '.')) {
             display.textContent = "0.";
         }
-        if (text === "0") 
+        else if (text === "0") 
             display.textContent = num;
-        else 
+        else if (num !== '.' || !text.includes('.'))
             display.textContent = text.concat(num);
     }
 }
