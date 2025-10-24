@@ -15,11 +15,12 @@ function divide(num1, num2) {
         alert("You cannot divide by 0"); 
         return 0;
     }
-    else {
-        const quotient = Number(num1) / Number(num2);
-        const MAX_LEN = 14;
-        return quotient.toPrecision(MAX_LEN);
-    }
+    let quotient = Number(num1) / Number(num2);
+    const MAX_LEN = 14;
+    quotient = quotient.toFixed(MAX_LEN);
+    quotient = (quotient.toString().length > MAX_LEN) ? 
+                quotient.toString().substring(0, MAX_LEN) : quotient;
+    return quotient;
 }
 
 function operate(operator, num1, num2) {
@@ -114,7 +115,7 @@ function handleExpr(expr) {
     expr.operand1 = expr.operand2 = expr.operator = null;
 }
 
-function handleDel(expr) {
+function handleDel() {
     const display = document.querySelector("#num-display"); 
     if (display.textContent !== "") {
         const length = display.textContent.length;
@@ -143,7 +144,6 @@ function handleClick(event, expr) {
     else if (isDelPressed(target)) {
         handleDel();
     }
-
 }
 
 function initProgram() {
