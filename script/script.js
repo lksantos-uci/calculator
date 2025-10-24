@@ -12,7 +12,11 @@ function multiply(num1, num2) {
 
 function divide(num1, num2) {
     if (num2 === 0) alert("You cannot divide by 0"); 
-    else return Number(num1) / Number(num2);
+    else {
+        const quotient = Number(num1) / Number(num2);
+        const MAX_LEN = 15;
+        return quotient.toPrecision(MAX_LEN);
+    }
 }
 
 function operate(operator, num1, num2) {
@@ -31,8 +35,19 @@ function operate(operator, num1, num2) {
 
 function displayInput(num) {
     const display = document.querySelector("#num-display");
-    if (display.textContent === "0") display.textContent = num;
-    else display.textContent += num;
+    const text = display.textContent;
+    const MAX_LEN = 15;
+    if (text.length < MAX_LEN) {
+        if ((text === "0") || 
+            (text === "" ) && 
+            (num === '.')) {
+            display.textContent = "0.";
+        }
+        if (text === "0") 
+            display.textContent = num;
+        else 
+            display.textContent = text.concat(num);
+    }
 }
 
 function clearDisplay() {
