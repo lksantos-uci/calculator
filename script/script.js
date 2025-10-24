@@ -96,6 +96,14 @@ function handleExpr(expr) {
     expr.operand1 = expr.operand2 = expr.operator = null;
 }
 
+function handleDel(expr) {
+    const display = document.querySelector("#num-display"); 
+    if (display.textContent !== "") {
+        const length = display.textContent.length;
+        display.textContent = display.textContent.slice(0, length - 1);
+    }
+}
+
 function handleClick(event, expr) {
     let target = event.target;
     if (isNumberPressed(target)) {
@@ -115,7 +123,7 @@ function handleClick(event, expr) {
         clearDisplay();
     }
     else if (isDelPressed(target)) {
-        
+        handleDel();
     }
 
 }
