@@ -20,7 +20,7 @@ function divide(num1, num2) {
     quotient = quotient.toFixed(MAX_LEN);
     quotient = (quotient.toString().length > MAX_LEN) ? 
                 quotient.toString().substring(0, MAX_LEN) : quotient;
-    return quotient;
+    return quotient * 1;
 }
 
 function operate(operator, num1, num2) {
@@ -105,23 +105,23 @@ function resetExpr(expr) {
     expr.operator = null;
 }
 
-function isNumberPressed(target) {
+function isNumberEntered(target) {
     return target.className === "num-btn";
 }
 
-function isOperationPressed(target) {
+function isOperationEntered(target) {
     return target.className === "op-btn";
 }
 
-function isEqualsPressed(target) {
+function isEqualsEntered(target) {
     return target.id === "equals";
 }
 
-function isCEPressed(target) {
+function isCEEntered(target) {
     return target.id === "ce-btn";
 
 }
-function isDelPressed(target) {
+function isDelEntered(target) {
     return target.id === "del-btn";
 }
 
@@ -152,29 +152,29 @@ function handleDel() {
     }
 }
 
-function handleClick(event, expr) {
+function handleInput(event, expr) {
     let target = event.target;
-    if (isNumberPressed(target)) {
+    if (isNumberEntered(target)) {
         handleNumbers(target, expr);
     }
-    else if (isOperationPressed(target) || isEqualsPressed(target)) {
+    else if (isOperationEntered(target) || isEqualsEntered(target)) {
         if (expr.operand1 && expr.operand2 && expr.operator) {
             expr.operand2 = getDisplayContent();
             displayExpr(expr);
             handleExpr(expr);
         }
-        if (isOperationPressed(target)) {
+        if (isOperationEntered(target)) {
             expr.operator = target.id;
             expr.operand1 = getDisplayContent();
             displayExpr(expr);
         }
     }
-    else if (isCEPressed(target)) {
+    else if (isCEEntered(target)) {
         resetExpr(expr);
         clearNumDisplay();
         clearExprDisplay();
     }
-    else if (isDelPressed(target)) {
+    else if (isDelEntered(target)) {
         handleDel();
     }
 }
@@ -186,7 +186,8 @@ function initProgram() {
         operand2: null, 
         operator: null
     };
-    calculator.addEventListener("click", (event) => handleClick(event, expression));
+    calculator.addEventListener("click", (event) => handleInput(event, expression));
+    document.addEventListener("keydown", (event) => handleInput(event, expression));
 }
 
 initProgram();
