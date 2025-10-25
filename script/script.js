@@ -10,58 +10,63 @@ function multiply(num1, num2) {
     return Number(num1) * Number(num2);
 }
 
+function formatQuotient(quotient) {
+    const MAX_LEN = 14;
+    quotient = quotient.toFixed(MAX_LEN);
+    if (quotient.toString().length > MAX_LEN)  
+        quotient = quotient.toString().substring(0, MAX_LEN);
+    return quotient * 1;
+}
+
 function divide(num1, num2) {
     if (num2 === "0") { 
-        alert("You cannot divide by 0"); 
+        alert("You cannot divide by 0!"); 
         return 0;
     }
     let quotient = Number(num1) / Number(num2);
-    const MAX_LEN = 14;
-    quotient = quotient.toFixed(MAX_LEN);
-    quotient = (quotient.toString().length > MAX_LEN) ? 
-                quotient.toString().substring(0, MAX_LEN) : quotient;
-    return quotient * 1;
+    quotient = formatQuotient(quotient);
+    return quotient;
 }
 
 function operate(operator, num1, num2) {
     switch (operator) {
-        case "addition":
         case "+":
             return add(num1, num2);
-        case "subtraction":
-        case "-":
+        case "−":
             return subtract(num1, num2);
-        case "multiplication":
-        case "*":
+        case "×":
             return multiply(num1, num2);
-        case "division":
-        case "/":
+        case "÷":
             return divide(num1, num2);
     }
 }
 
-function getOperator(operator) {
-    switch (operator) {
-        case "addition":
-        case '+':
-            return '+';
-        case "subtraction":
-        case '-':
-            return '-';
-        case "multiplication":
-        case '*':
-            return '×';
-        case "division":
-        case "/":
-            return '÷';
+function formatOperator(event, operator) {
+    const type = event.type;
+    if (type === "keydown") {
+        switch (operator) {
+            case '+':
+                return '+';
+            case '-':
+                return '−';
+            case '*':
+                return '×';
+            case "/":
+                return '÷';
+        }
     }
+    return operator;
+}
+
+function isDisplayFull(length) {
+    const MAX_LEN = 14;
+    return length >= MAX_LEN;
 }
 
 function displayInput(num) {
     const display = document.querySelector("#num-display");
     const text = display.textContent;
-    const MAX_LEN = 14;
-    if (text.length < MAX_LEN) {
+    if (!isDisplayFull(text.length)) {
         if ((text === "0") || 
             (text === "" ) && 
             (num === '.')) {
@@ -76,7 +81,7 @@ function displayInput(num) {
 
 function displayExpr(expr) {
     const display = document.querySelector("#expr-display");
-    const operator = getOperator(expr.operator);
+    const operator = expr.operator;
     if (expr.operand1 && expr.operator && expr.operand2) {
         let text = "".concat(expr.operand1, " ", operator, " ", expr.operand2, " = ");
         display.textContent = text;
@@ -132,12 +137,9 @@ function isOperationEntered(event) {
 }
 
 function isEqualsEntered(event) {
-    const target = event.target;
-    const type = event.type;
-    const key = event.key;
-    if (type === "click")
-        return target.id === "equals";
-    return (key === '=');
+    const clickedBtn = event.target.textContent;
+    const pressedKey = event.key;
+    return (clickedBtn === "=") || (pressedKey === "=");
 }
 
 function isCEEntered(target) {
@@ -167,18 +169,30 @@ function handleNumbers(event, expr) {
     else displayInput(num);
 }
 
-function handleExpr(expr) {
+function displayRes(expr) {
     const result = operate(expr.operator, expr.operand1, expr.operand2);
     updateDisplay(result);
     expr.operand1 = expr.operand2 = expr.operator = null;
 }
 
-function handleDel() {
+function isNumDisplayBlank(content) {
+    return content === "";
+}
+
+function handleDel(expr) {
     const display = document.querySelector("#num-display"); 
-    if (display.textContent !== "") {
+    if (!isNumDisplayBlank(display.textContent)) {
         const length = display.textContent.length;
         display.textContent = display.textContent.slice(0, length - 1);
     }
+    if (isNumDisplayBlank(display.textContent)) {
+        clearExprDisplay();
+        resetExpr(expr);
+    } 
+}
+
+function isExprEntered(expr) {
+    return expr.operand1 && expr.operand2 && expr.operator;
 }
 
 function handleInput(event, expr) {
@@ -188,13 +202,16 @@ function handleInput(event, expr) {
         handleNumbers(event, expr);
     }
     else if (isOperationEntered(event) || isEqualsEntered(event)) {
-        if (expr.operand1 && expr.operand2 && expr.operator) {
+        if (isExprEntered(expr)) {
             expr.operand2 = getDisplayContent();
             displayExpr(expr);
-            handleExpr(expr);
+            displayRes(expr);
         }
         if (isOperationEntered(event)) {
-            expr.operator = (type === "click") ? target.id : event.key;
+            const clickedBtn = target.textContent;
+            const pressedKey = event.key;
+            const input = (type === "click") ? clickedBtn : pressedKey;
+            expr.operator = formatOperator(event, input);
             expr.operand1 = getDisplayContent();
             displayExpr(expr);
         }
@@ -205,7 +222,7 @@ function handleInput(event, expr) {
         clearExprDisplay();
     }
     else if (isDelEntered(event)) {
-        handleDel();
+        handleDel(expr);
     }
 }
 
